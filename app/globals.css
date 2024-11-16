@@ -2,20 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+.scale {
+    transform: scale(1, 1);
+    transition: transform 0.8s ease;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.scale:hover {
+    transform: scale(1.2, 1.2);
+    filter: brightness(1.2);
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+.scale-1 {
+    transform: scale(1, 1);
+    transition: transform 0.8s ease;
+}
+
+.scale-1:hover {
+    transform: scale(1.1, 1.1);
 }
