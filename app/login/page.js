@@ -14,7 +14,7 @@ const Login = () => {
       router.push("/dashboard");
     }
   }, [session, router]);
-  document.title = "Tip me a treat : Login"
+
   return (
     <>
 

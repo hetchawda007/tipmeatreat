@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 export default function Home() {
 
-  document.title = 'Tip me a treat : Receive funds from your followers'
   return (
     <>
       <div className="bg-[radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">

@@ -18,7 +18,7 @@ const Paymentpage = ({ params }) => {
     const [payments, setpayments] = useState([])
     const searchParams = useSearchParams()
     const router = useRouter()
-    document.title = `Tip ${params} a treat`
+
     const handlechange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value })
     }

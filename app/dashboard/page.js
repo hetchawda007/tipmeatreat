@@ -22,7 +22,6 @@ const Dashboard = () => {
   }
 
   const getuserdata = async () => {
-    document.title = `${session.user.name}'s Dashboard : Tip me a treat`
     let name = session.user.name
     let u = await getuser(name)
     setform({ ...form, title: u[0]?.title || '', profilepic: u[0]?.profilepic || '', coverpic: u[0]?.coverpic || '', razorpayid: u[0]?.razorpayid || '', razorpaysecret: u[0]?.razorpaysecret || '' })
