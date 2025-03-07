@@ -6,13 +6,19 @@ const authoptions = NextAuth({
     providers: [
         GitHubProvider({
             clientId: process.env.GITHUB_ID,
-            clientSecret: process.env.GITHUB_SECRET
+            clientSecret: process.env.GITHUB_SECRET,
+            state: true
         }),
     ],
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
-        async signIn({ user, account, profile, email, credentials }) {
+        async signIn({ user, account, profile }) {
             let usermail = user.email
+            let accessToken = account.access_token
+            if (!accessToken) {
+                throw new Error('No access token provided')
+            }
+            console.log(process.env.GITHUB_ID, process.env.GITHUB_SECRET, process.env.NEXTAUTH_SECRET);
             let username = user.name
             if (account.provider == "github") {
                 await connectDB()
@@ -22,11 +28,11 @@ const authoptions = NextAuth({
                     let newuser = new User({
                         username: username,
                         email: usermail,
-                        profilepic : '',
-                        title : '',
-                        coverpic : '', 
-                        razorpayid : '', 
-                        razorpaysecret : ''
+                        profilepic: '',
+                        title: '',
+                        coverpic: '',
+                        razorpayid: '',
+                        razorpaysecret: ''
                     })
                     await newuser.save()
                 }

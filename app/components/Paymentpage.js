@@ -1,7 +1,7 @@
 "use client"
 
 import Script from 'next/script'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Image from 'next/image';
 import { useSession } from "next-auth/react"
 import { ToastContainer, toast } from 'react-toastify';
@@ -15,6 +15,7 @@ const Paymentpage = ({ params }) => {
     const { data: session } = useSession()
     const [form, setForm] = useState({ name: '', message: '', amount: '' })
     const [currentuser, setCurrentuser] = useState([])
+    const credentials = useRef()
     const [payments, setpayments] = useState([])
     const searchParams = useSearchParams()
     const router = useRouter()
@@ -30,15 +31,15 @@ const Paymentpage = ({ params }) => {
 
     useEffect(() => {
         if (searchParams.get("paymentdone") == 'true') {
-            toast('Payment Successful ✅', {
-                position: "top-right",
-                autoClose: 5000,
+            toast.success('Payment Successful', {
+                position: "bottom-center",
+                autoClose: 4000,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
                 draggable: true,
                 progress: undefined,
-                theme: "light",
+                theme: "dark",
                 transition: Bounce,
             });
         }
@@ -53,29 +54,55 @@ const Paymentpage = ({ params }) => {
     const getdata = async () => {
         let userdata = await getuser(params)
         let paymentsdata = await getpayment(params)
+        console.log(userdata);
         setCurrentuser(userdata)
+        credentials.current = userdata[0] // Ensure credentials.current is set to the first user object
         setpayments(paymentsdata)
         return payments
     }
 
+    useEffect(() => {
+        console.log(credentials.current);
+    }, [credentials.current])
+
     const pay = async () => {
 
+        if (!credentials.current.razorpayid || !credentials.current.razorpaysecret) {
+            console.log(credentials.current.razorpayid, credentials.current.razorpaysecret);
+            toast.error('User has not set up payment credentials yet',
+                {
+                    position: "bottom-center",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    transition: Bounce,
+                }
+            )
+            setForm({ name: '', message: '', amount: '' })
+            return
+        }
+
         let payment = await start(session.user?.name, form)
+
         let order_id = payment?.id
 
         var options = {
-            "key_id": currentuser.razorpayid,
+            "key_id": credentials.current.razorpayid,
             "amount": `${form.amount}00`,
             "currency": "INR",
             "name": `${form.name}`,
             "description": "Test Transaction",
             "image": "https://example.com/your_logo",
-            "order_id": order_id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+            "order_id": order_id,
             "callback_url": `${process.env.NEXT_PUBLIC_URL}/api/razorpay`,
-            "prefill": { //We recommend using the prefill parameter to auto-fill customer's contact information especially their phone number
-                "name": "Gaurav Kumar", //your customer's name
+            "prefill": {
+                "name": "Gaurav Kumar",
                 "email": "gaurav.kumar@example.com",
-                "contact": "9000090000" //Provide the customer's phone number for better conversion rates 
+                "contact": "9000090000"
             },
             "notes": {
                 "address": "Razorpay Corporate Office"
@@ -116,9 +143,14 @@ const Paymentpage = ({ params }) => {
                                 unoptimized
                             />
                         ) : (
-                            <div className="w-full text-3xl font-bold h-[10vh] flex items-center justify-center">
-                                <p>Please enter your banner-picture from dashboard</p>
-                            </div>
+                            <Image
+                                className='w-screen object-cover h-[48vh] max-lg:h-[20vh]'
+                                src={'samplebanner.jpg'}
+                                width={2000}
+                                height={300}
+                                alt='Banner picture'
+                                unoptimized
+                            />
                         )}
                     </div>
 
@@ -133,9 +165,14 @@ const Paymentpage = ({ params }) => {
                                 unoptimized
                             />
                         ) : (
-                            <div className="w-full text-xl font-bold h-[10vh] flex items-center justify-center">
-                                <p>Please enter your profile-picture from dashboard</p>
-                            </div>
+                            <Image
+                                className='w-28 absolute h-28 top-[40vh] rounded-lg object-fill max-lg:top-[15vh] cursor-pointer scale-1 max-sm:h-20 max-sm:w-20'
+                                src={session?.user?.image || 'sampleuser.png'}
+                                width={2000}
+                                height={300}
+                                alt='Profile picture'
+                                unoptimized
+                            />
                         )}
                     </div>
                 </div>
@@ -149,18 +186,16 @@ const Paymentpage = ({ params }) => {
                         </div>
                     )}
                 </div>
-                
+
                 <div className='text-center text-base mt-1 font-normal'>
-                    {currentuser && currentuser[0]?.username ? (
+                    {currentuser && currentuser[0]?.title ? (
                         currentuser[0].title
                     ) : (
-                        <div className="w-full h-[10vh] flex items-center justify-center">
-                            <p>Loading... one liner</p>
-                        </div>
+                        <p>Here comes your title</p>
                     )}
 
                 </div>
-                <div className='text-center text-sm mt-1'>₹{payments.reduce((a, b) => a + b.amount, 0)} Raised • {payments.length} Payments received</div>
+                <div className='text-center text-sm mt-1'>₹{payments.reduce((a, b) => a + b.amount, 0)} Raised • {payments.length} Payments received yet</div>
                 <div className='text-sm font-thin mt-1 text-center'>
                     {currentuser && currentuser[0]?.username ? (
                         `Tip ${currentuser[0].username} a Treat`

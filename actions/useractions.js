@@ -1,10 +1,9 @@
 "use server"
-
+import axios from "axios"
 import connectDB from "@/db/connectDB"
 import Payment from "@/models/Payment"
 import Razorpay from "razorpay"
 import User from "@/models/User"
-
 
 export const start = async (name, form) => {
     await connectDB()
@@ -28,6 +27,29 @@ export const start = async (name, form) => {
     });
 
     return x
+}
+
+export const checkcredentials = async (keyid, keysecret) => {
+    console.log(keyid, keysecret);
+    try {
+
+        const check = await axios.get('https://api.razorpay.com/v1/orders', {
+            auth: {
+                username: keyid,
+                password: keysecret
+            }
+        })
+        console.log(check);
+
+        if (check.status === 200) {
+            console.log('success');
+            return ({ result: true })
+        }
+    } catch (error) {
+        console.log('error captured');
+        return ({ result: false })
+    }
+
 }
 
 export const getpayment = async (params) => {
