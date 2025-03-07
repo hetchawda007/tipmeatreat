@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🚀 Creator Crowdfunding Platform  
 
-## Getting Started
+A **crowdfunding platform** designed for **creators, artists, and influencers** to **raise funds from their fans and followers**. Integrated with **Razorpay**, this platform allows creators to **set up their profile, receive payments securely, and manage transactions effortlessly**.  
 
-First, run the development server:
+## 🚀 Features  
+✅ **Seamless Creator Onboarding** – Creators can link their **Razorpay ID & Secret** to start accepting funds  
+✅ **Secure Payment Processing** – Integrated **Razorpay** for smooth and reliable transactions  
+✅ **Custom Creator Profiles** – Each creator gets a **personalized page** to receive contributions  
+✅ **Real-Time Transaction Updates** – Ensuring transparency and instant payment tracking  
+✅ **Scalable & Fast Performance** – Powered by **Next.js (SSR/SSG) and MongoDB**  
 
-```bash
+## 🛠 Tech Stack  
+- **Frontend & Backend:** Next.js (Full-Stack)  
+- **Database:** MongoDB  
+- **Payments:** Razorpay API  
+
+## Payment page interface
+
+![work3](https://github.com/user-attachments/assets/967a7565-e778-4fbe-a265-0c0ddef5a7f1)
+
+
+![image](https://github.com/user-attachments/assets/0bfd12b0-e298-4723-b3f6-9a7fc52bbc85)
+
+
+![image](https://github.com/user-attachments/assets/a5bfaee7-ffac-4ae9-97fd-a43e90ae59ba)
+
+## 🛠 Live Url
+
+https://tipmeatreat.vercel.app
+
+## 🔧 Installation & Setup  
+
+### 1️⃣ Clone the repository (use your own environment variables)
+```sh
+git clone https://github.com/hetchawda007/tipmeatreat.git
+cd creator-crowdfunding-platform
+npm i
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
