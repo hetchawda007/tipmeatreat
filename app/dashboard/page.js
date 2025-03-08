@@ -17,6 +17,7 @@ const Dashboard = () => {
   const { data: session } = useSession()
   const [form, setform] = useState({ title: "", profilepic: "", coverpic: "", razorpayid: "", razorpaysecret: "" })
   const [payments, setpayments] = useState([])
+  const [loader, setloader] = useState(false)
   const router = useRouter()
 
   const handlechange = (e) => {
@@ -77,7 +78,10 @@ const Dashboard = () => {
   }
 
   useEffect(() => {
-    console.log(session);
+    setloader(true)
+  }, [form])
+
+  useEffect(() => {
     if (!session || !session.user) {
       router.push("/login");
     }
@@ -117,29 +121,50 @@ const Dashboard = () => {
         <div className='w-[60%] mx-auto text-xl font-semibold text-center pb-8 text-white max-lg:w-[85%] max-sm:w-[90%] max-sm:text-2xl'>You can start setting up your profile here {session?.user?.name ? session.user.name : ''} :)</div>
 
         <form className='w-[35%] mx-auto flex flex-col gap-5 max-lg:w-[70%] max-sm:w-[95%]' onSubmit={(e) => { e.preventDefault(); handlesubmit(); }}>
-
-          <div className='flex flex-col gap-1 max-sm:w-full'>
-            <label className='self-start text-white' htmlFor="title">Your Title</label>
-            <input onChange={handlechange} suppressHydrationWarning={true} value={form.title} className='rounded-xl bg-gray-800 text-white pl-2 py-2 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300' type="text" name="title" required id="title" />
-          </div>
-          <div className='flex flex-col gap-1 max-sm:w-full'>
-            <label className='self-start text-white' htmlFor="profilepic">Profile Url</label>
-            <input onChange={handlechange} suppressHydrationWarning={true} className='rounded-xl bg-gray-800 text-white pl-2 py-2 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300' value={form.profilepic} type="text" name="profilepic" id="profilepic" />
-          </div>
-          <div className='flex flex-col gap-1 max-sm:w-full'>
-            <label className='self-start text-white' htmlFor="coverpic">Banner Url</label>
-            <input onChange={handlechange} suppressHydrationWarning={true} className='rounded-xl bg-gray-800 text-white pl-2 py-2 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300' value={form.coverpic} type="text" name="coverpic" id="coverpic" />
-          </div>
-          <div className='flex flex-col gap-1 max-sm:w-full'>
-            <label className='self-start text-white' htmlFor="Razorpay">Razorpay Id</label>
-            <input onChange={handlechange} suppressHydrationWarning={true} value={form.razorpayid} className='rounded-xl bg-gray-800 text-white pl-2 py-2 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300' type="password" name="razorpayid" required id="razorpayid" />
-          </div>
-          <div className='flex flex-col gap-1 max-sm:w-full'>
-            <label className='self-start text-white' htmlFor="Razorpay">Razorpay Secret</label>
-            <input onChange={handlechange} suppressHydrationWarning={true} value={form.razorpaysecret} className='rounded-xl bg-gray-800 text-white pl-2 py-2 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300' type="password" name="razorpaysecret" required id="razorpaysecret" />
-          </div>
+          <SkeletonTheme baseColor="#202020" highlightColor="#444">
+            <div className='flex flex-col gap-1 max-sm:w-full'>
+              <label className='self-start text-white' htmlFor="title">Your Title</label>
+              {form.title || loader ? (
+                <input onChange={handlechange} suppressHydrationWarning={true} value={form.title} className='rounded-xl bg-gray-800 text-white pl-2 py-2 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300' required type="text" name="title" id="title" />
+              ) : (
+                <Skeleton height={40} />
+              )}
+            </div>
+            <div className='flex flex-col gap-1 max-sm:w-full'>
+              <label className='self-start text-white' htmlFor="profilepic">Profile Url</label>
+              {form.profilepic || loader ? (
+                <input onChange={handlechange} suppressHydrationWarning={true} className='rounded-xl bg-gray-800 text-white pl-2 py-2 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300' value={form.profilepic} type="text" name="profilepic" required id="profilepic" />
+              ) : (
+                <Skeleton height={40} />
+              )}
+            </div>
+            <div className='flex flex-col gap-1 max-sm:w-full'>
+              <label className='self-start text-white' htmlFor="coverpic">Banner Url</label>
+              {form.coverpic || loader ? (
+                <input onChange={handlechange} suppressHydrationWarning={true} className='rounded-xl bg-gray-800 text-white pl-2 py-2 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300' value={form.coverpic} type="text" name="coverpic" id="coverpic" />
+              ) : (
+                <Skeleton height={40} />
+              )}
+            </div>
+            <div className='flex flex-col gap-1 max-sm:w-full'>
+              <label className='self-start text-white' htmlFor="Razorpay">Razorpay Id</label>
+              {form.razorpayid || loader ? (
+                <input onChange={handlechange} suppressHydrationWarning={true} value={form.razorpayid} className='rounded-xl bg-gray-800 text-white pl-2 py-2 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300' type="password" required name="razorpayid" id="razorpayid" />
+              ) : (
+                <Skeleton height={40} />
+              )}
+            </div>
+            <div className='flex flex-col gap-1 max-sm:w-full'>
+              <label className='self-start text-white' htmlFor="Razorpay">Razorpay Secret</label>
+              {form.razorpaysecret || loader ? (
+                <input onChange={handlechange} suppressHydrationWarning={true} value={form.razorpaysecret} className='rounded-xl bg-gray-800 text-white pl-2 py-2 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300' type="password" required name="razorpaysecret" id="razorpaysecret" />
+              ) : (
+                <Skeleton height={40} />
+              )}
+            </div>
+          </SkeletonTheme>
           <div className='mx-auto'>
-            <motion.button whileHover={{ scale: 1.1 }} suppressHydrationWarning={true} className="mt-4 relative cursor-pointer inline-flex items-center justify-center p-0.5 mb-7 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 shadow-lg" disabled={form.title.length < 4 || form.razorpayid.length < 4 || form.razorpaysecret.length < 4 || form.title.length > 50}>
+            <motion.button type='submit' whileHover={{ scale: 1.1 }} suppressHydrationWarning={true} className="mt-4 relative cursor-pointer inline-flex items-center justify-center p-0.5 mb-7 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 shadow-lg">
               <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
                 Submit
               </span>
@@ -150,14 +175,18 @@ const Dashboard = () => {
           <h2 className='text-3xl font-bold text-white max-sm:text-xl'>All Contributors</h2>
           <ul className='flex flex-col gap-5 max-lg:p-2'>
             {payments.length == 0 && <li className='text-bold text-xl text-wrap text-white max-sm:text-lg'> No Payments Yet</li>}
-            {payments.map((item, id) =>
+            {payments.length > 0 ? payments.map((item, id) =>
               <li key={id} className='text-semibold text-wrap flex gap-5 items-center text-white max-sm:text-sm'>
                 <motion.div whileHover={{ scale: 1.1 }}>
                   <Image className='w-8 cursor-pointer max-sm:w-6' src="/user.gif" alt="user" width={200} height={200} />
                 </motion.div>
                 <div><span className='font-bold'>{item.name}</span> just contributed <span className='font-bold'>₹{item.amount}</span><b>. {item.message}</b></div>
-              </li>)}
-
+              </li>) : <SkeletonTheme baseColor="#202020" highlightColor="#444">
+              <div className="flex gap-5">
+                <Skeleton height={30} width={200} />
+                <Skeleton height={30} width={200} />
+              </div>
+            </SkeletonTheme>}
           </ul>
         </motion.div>
       </div>

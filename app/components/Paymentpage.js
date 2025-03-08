@@ -9,6 +9,7 @@ import { Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { start, getpayment, getuser } from '@/actions/useractions';
 import { useSearchParams } from 'next/navigation';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton'
 import { useRouter } from 'next/navigation';
 const Paymentpage = ({ params }) => {
 
@@ -16,6 +17,7 @@ const Paymentpage = ({ params }) => {
     const [form, setForm] = useState({ name: '', message: '', amount: '' })
     const [currentuser, setCurrentuser] = useState([])
     const credentials = useRef()
+    const [loader, setloader] = useState(false)
     const [payments, setpayments] = useState([])
     const searchParams = useSearchParams()
     const router = useRouter()
@@ -54,16 +56,18 @@ const Paymentpage = ({ params }) => {
     const getdata = async () => {
         let userdata = await getuser(params)
         let paymentsdata = await getpayment(params)
-        console.log(userdata);
-        setCurrentuser(userdata)
-        credentials.current = userdata[0] // Ensure credentials.current is set to the first user object
+        credentials.current = userdata[0]
         setpayments(paymentsdata)
+        setCurrentuser(userdata)
         return payments
     }
 
     useEffect(() => {
-        console.log(credentials.current);
-    }, [credentials.current])
+        setloader(true)
+        if (currentuser[0]) {
+            console.log(currentuser[0].profilepic);
+        }
+    }, [currentuser])
 
     const pay = async () => {
 
@@ -133,47 +137,55 @@ const Paymentpage = ({ params }) => {
             <div className='min-h-[85vh] overflow-x-hidden bg-neutral-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]'>
                 <div className='relative'>
                     <div className='flex justify-center rounded-xl'>
-                        {currentuser && currentuser[0]?.profilepic ? (
+                        {currentuser && currentuser[0]?.coverpic ? (
                             <Image
-                                className='w-screen object-cover h-[48vh] max-lg:h-[20vh]'
+                                className='w-screen object-cover h-[40vh] max-lg:h-[20vh]'
                                 src={currentuser[0].coverpic}
                                 width={2000}
                                 height={300}
                                 alt='Banner picture'
                                 unoptimized
                             />
-                        ) : (
+                        ) : !loader ? (
+                            <SkeletonTheme baseColor="#202020" highlightColor="#444">
+                                <Skeleton height={300} width={2000} className='w-screen object-cover h-[48vh] max-sm:h-[20vh]' />
+                            </SkeletonTheme>
+                        ) :
                             <Image
-                                className='w-screen object-cover h-[48vh] max-lg:h-[20vh]'
+                                className='w-screen object-cover h-[40vh] max-lg:h-[20vh]'
                                 src={'samplebanner.jpg'}
                                 width={2000}
                                 height={300}
                                 alt='Banner picture'
                                 unoptimized
                             />
-                        )}
+                        }
                     </div>
 
                     <div className='flex justify-center h-0 rounded-xl'>
-                        {currentuser && currentuser[0]?.profilepic ? (
+                        {currentuser && currentuser[0]?.profilepic && loader ? (
                             <Image
-                                className='w-28 absolute h-28 top-[40vh] border border-white rounded-lg object-fill max-lg:top-[15vh] cursor-pointer scale-1 max-sm:h-20 max-sm:w-20'
+                                className='w-28 absolute h-28 top-[32vh] border border-white rounded-full object-cover max-lg:top-[15vh] cursor-pointer scale-1 max-sm:h-20 max-sm:w-20'
                                 src={currentuser[0].profilepic}
                                 width={2000}
                                 height={300}
                                 alt='Profile picture'
                                 unoptimized
                             />
-                        ) : (
+                        ) : !loader ? (
+                            <SkeletonTheme baseColor="#202020" highlightColor="#444">
+                                <Skeleton circle={true} height={112} width={112} className='w-28 absolute h-28 -top-14 border border-white rounded-lg object-fill max-lg:-top-14 cursor-pointer scale-1 max-sm:h-20 max-sm:w-20' />
+                            </SkeletonTheme>
+                        ) :
                             <Image
-                                className='w-28 absolute h-28 top-[40vh] rounded-lg object-fill max-lg:top-[15vh] cursor-pointer scale-1 max-sm:h-20 max-sm:w-20'
-                                src={session?.user?.image || 'sampleuser.png'}
+                                className='w-28 absolute h-28 top-60 border border-white rounded-full object-fill max-lg:top-64 cursor-pointer scale-1 max-sm:h-20 max-sm:w-20'
+                                src={'sampleuser.png'}
                                 width={2000}
                                 height={300}
                                 alt='Profile picture'
                                 unoptimized
                             />
-                        )}
+                        }
                     </div>
                 </div>
 
@@ -181,41 +193,65 @@ const Paymentpage = ({ params }) => {
                     {currentuser && currentuser[0]?.username ? (
                         currentuser[0].username
                     ) : (
-                        <div className="w-full h-[10vh] flex items-center justify-center">
-                            <p>Loading... username</p>
-                        </div>
+                        <SkeletonTheme baseColor="#202020" highlightColor="#444">
+                            <Skeleton width={200} height={30} />
+                        </SkeletonTheme>
                     )}
                 </div>
 
                 <div className='text-center text-base mt-1 font-normal'>
                     {currentuser && currentuser[0]?.title ? (
                         currentuser[0].title
-                    ) : (
-                        <p>Here comes your title</p>
-                    )}
+                    ) : !loader ? (
+                        <SkeletonTheme baseColor="#202020" highlightColor="#444">
+                            <Skeleton width={300} height={20} />
+                        </SkeletonTheme>
+                    ) :
+                        <p> Here Comes your title</p>
+                    }
 
                 </div>
-                <div className='text-center text-sm mt-1'>₹{payments.reduce((a, b) => a + b.amount, 0)} Raised • {payments.length} Payments received yet</div>
+                <div className='text-center text-sm mt-1'>
+                    {payments.length > 0 ? (
+                        `₹${payments.reduce((a, b) => a + b.amount, 0)} Raised • ${payments.length} Payments received yet`
+                    ) : (
+                        <SkeletonTheme baseColor="#202020" highlightColor="#444">
+                            <Skeleton width={300} height={20} />
+                        </SkeletonTheme>
+                    )}
+                </div>
                 <div className='text-sm font-thin mt-1 text-center'>
                     {currentuser && currentuser[0]?.username ? (
                         `Tip ${currentuser[0].username} a Treat`
                     ) : (
-                        <div className="w-full h-[10vh] flex items-center justify-center">
-                            <p>Loading... username</p>
-                        </div>
+                        <SkeletonTheme baseColor="#202020" highlightColor="#444">
+                            <Skeleton width={200} height={20} />
+                        </SkeletonTheme>
                     )}
                 </div>
                 <div className="main w-[80%] mx-auto flex gap-[2%] py-20 text-slate-400 max-lg:flex-col max-lg:gap-10">
                     <div className="supporters bg-gray-900 p-10 rounded-xl w-[48%] flex flex-col gap-5 items-center max-lg:w-[95%] max-lg:px-5">
                         <h2 className='text-3xl font-bold max-sm:text-xl'>Top Contributers</h2>
                         <ul className='flex flex-col gap-5 max-lg:p-2'>
-                            {payments.length == 0 && <li className='text-bold text-xl text-wrap max-sm:text-lg'> No Payments Yet</li>}
-                            {payments.slice(0, 5).map((item, id) =>
-                                <li key={id} className='text-semibold text-wrap flex gap-5 items-center max-sm:text-sm'>
-                                    <Image className='w-8 cursor-pointer max-sm:w-6' src="/user.gif" alt="user" width={200} height={200} />
-                                    <div><span className='font-bold'>{item.name}</span> just contributed <span className='font-bold'>₹{item.amount}</span><b>. {item.message}</b></div>
-                                </li>)}
 
+                            {payments.length > 0 ? (
+                                payments.slice(0, 5).map((item, id) =>
+                                    <li key={id} className='text-semibold text-wrap flex gap-5 items-center max-sm:text-sm'>
+                                        <Image className='w-8 cursor-pointer max-sm:w-6' src="/user.gif" alt="user" width={200} height={200} />
+                                        <div><span className='font-bold'>{item.name}</span> just contributed <span className='font-bold'>₹{item.amount}</span><b>. {item.message}</b></div>
+                                    </li>
+                                )
+                            ) : (
+                                <SkeletonTheme baseColor="#202020" highlightColor="#444">
+                                    {[...Array(5)].map((_, id) => (
+                                        <li key={id} className='text-semibold text-wrap flex gap-5 items-center max-sm:text-sm'>
+                                            <Skeleton circle={true} height={32} width={32} />
+                                            <div><Skeleton width={200} height={20} /></div>
+                                        </li>
+                                    ))}
+                                </SkeletonTheme>
+                            )}
+                            {payments.length == 0 && loader && <li className='text-bold text-xl text-wrap max-sm:text-lg'> No Payments Yet</li>}
                         </ul>
                     </div>
                     <div className="payment bg-gray-900 rounded-xl w-[48%] flex flex-col justify-center gap-5 py-10 items-center max-lg:w-[95%]">

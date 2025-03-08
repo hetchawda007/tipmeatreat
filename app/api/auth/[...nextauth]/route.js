@@ -20,6 +20,7 @@ const authoptions = NextAuth({
             }
             console.log(process.env.GITHUB_ID, process.env.GITHUB_SECRET, process.env.NEXTAUTH_SECRET);
             let username = user.name
+            let picture = user.image
             if (account.provider == "github") {
                 await connectDB()
                 const currentuser = await User.findOne({ email: usermail })
@@ -28,7 +29,7 @@ const authoptions = NextAuth({
                     let newuser = new User({
                         username: username,
                         email: usermail,
-                        profilepic: '',
+                        profilepic: picture,
                         title: '',
                         coverpic: '',
                         razorpayid: '',
