@@ -95,7 +95,7 @@ const Paymentpage = ({ params }) => {
         let order_id = payment?.id
 
         var options = {
-            "key_id": credentials.current.razorpayid,
+            "key": credentials.current.razorpayid,
             "amount": `${form.amount}00`,
             "currency": "INR",
             "name": `${form.name}`,
